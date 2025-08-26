@@ -52,6 +52,8 @@ RUN apt-get install --yes \
     python3-dev \
     graphviz \
     libgraphviz-dev \
+    openssh-client \
+    git \
     ca-certificates 
     # should ca-certificates be in the temp installs section?
     # other stuff
@@ -111,3 +113,6 @@ RUN apt-get remove --yes \
 
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
+
+
+CMD ["sleep","infinity"]
