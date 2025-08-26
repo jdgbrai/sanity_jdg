@@ -1,0 +1,31 @@
+name: publish
+on: 
+  push:
+    branches: [ main ]
+permissions:
+  contents: read 
+  packages: write
+
+jobs:
+  vuln_image: 
+    name: vuln_build
+    runs-on: ubuntu-latest
+    steps:
+    # okay.  For nerds like me: @v4 is part of github's repo and contains the currently recommended version for building images.
+    # You can find the newest checkout action releases here: https://github.com/actions/checkout
+    # Note @v5 is just released and I can't tell if it's universally supported.  @v4 seems to be universally supported.
+    # other actions can be browsed here if that's your thing: https://github.com/marketplace?type=actions
+      # checkout so that the runner can access the docker file
+      - uses: actions/checkout@v4
+      # authenticate so so that ghcr can load the container
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with: 
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # build and push
+      - name: Build vuln image 
+        run: |
+          docker build --file .devcontainer/Dockerfile --tag ghcr.io/jdgbrai/sanity:latest --build_arg USERNAME=billysane .
+          docker push ghcr.io/jdgbrai/sanity:latest
